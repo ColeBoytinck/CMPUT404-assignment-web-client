@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # coding: utf-8
-# Copyright 2016 Abram Hindle, https://github.com/tywtyw2002, and https://github.com/treedust
-# 
+# Copyright 2016 Abram Hindle, Cole Boytinck, https://github.com/tywtyw2002, and https://github.com/treedust
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,21 +37,23 @@ class HTTPClient(object):
 
     def connect(self, host, port):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        print("TEST, host: " + str(host) + " port: " + str(port))
         self.socket.connect((host, port))
         return None
 
     def get_code(self, data):
-        return None
+        return 200
 
     def get_headers(self,data):
         return None
 
     def get_body(self, data):
-        return None
-    
+        return ""
+
     def sendall(self, data):
         self.socket.sendall(data.encode('utf-8'))
-        
+        return self.socket.recv(2048)
+
     def close(self):
         self.socket.close()
 
@@ -68,9 +70,12 @@ class HTTPClient(object):
         return buffer.decode('utf-8')
 
     def GET(self, url, args=None):
-        code = 500
-        body = ""
-        return HTTPResponse(code, body)
+        request = "GET / HTTP/1.1/r/n/r/n"
+        self.connect(url, 80)
+        data = self.sendall(request)
+        print(data)
+        self.close()
+        return HTTPResponse(200, "TEST")
 
     def POST(self, url, args=None):
         code = 500
@@ -82,7 +87,7 @@ class HTTPClient(object):
             return self.POST( url, args )
         else:
             return self.GET( url, args )
-    
+
 if __name__ == "__main__":
     client = HTTPClient()
     command = "GET"
